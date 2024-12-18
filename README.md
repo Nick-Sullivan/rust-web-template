@@ -1,6 +1,6 @@
 ## Rust Web Template
 
-A basic API template that can run on a server (receiving API requests), and on a Lambda (triggered by API Gateway, or triggered by SQS).
+A basic Rust API template that can run on a server (receiving API requests), and on a Lambda (triggered by API Gateway, or triggered by SQS).
 
 It uses `axum` as the web application framework, with `axum-aws-lambda` to enable use on a lambda.
 
@@ -29,7 +29,7 @@ Via command line.
 ```bash
 cd server
 cargo run
-curl -X GET http://localhost:3000
+curl -X GET http://localhost:3000/hello
 ```
 
 Via VSCode
@@ -38,51 +38,36 @@ You can either use `rust-analyzer: Debug` in VSCode selection, or use `Run` whic
 
 ## Creating cloud infrastructure
 
-To create this infrastructure, we'll use the AWS CDK.
-To bootstrap (used to create this repo)
+To create this infrastructure, we use terraform.
 
-```bash
-npm install -g aws-cdk
-cd infrastructure
-cdk init app --language python
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-cdk bootstrap
-cdk list
+```
+cd terraform
+terraform init
+terraform apply
 ```
 
-To initialise:
-
-```bash
-source .venv/bin/activate
-cdk synth
-cdk diff
-cdk deploy
-```
-
-In the output, take note of the `ApiUrl` and `QueueUrl`
+In the output, take note of the `api_gateway_url` and `sqs_url`
 
 To clean up at the end:
 
 ```bash
-cdk destroy
+terraform destroy
 ```
 
 ## API Gateway induced lambda
 
-Use the value of `ApiUrl` from the deployment output.
-
 ```bash
-export API_URL=https://0sixteekf9.execute-api.ap-southeast-2.amazonaws.com/prod/
-curl -X GET $API_URL/from_api
+export API_GATEWAY_URL=<api_gateway_url>
+curl -X GET $API_GATEWAY_URL/hello
 ```
+
+It should respond with "Hello!".
 
 ## SQS induced lambda
 
-Use the value of `QueueUrl` from the deployment output.
-
 ```bash
-export QUEUE_URL=https://sqs.ap-southeast-2.amazonaws.com/314077822992/LambdaStack-RequestQueueEA127976-d4ZziG18jqHu
-aws sqs send-message --queue-url $QUEUE_URL --message-body "My message"
+export QUEUE_URL=<sqs_url>
+aws sqs send-message --queue-url $QUEUE_URL --message-body "My message" --region eu-west-2
 ```
+
+Go to cloudwatch logs to see the invocation, it will be in `eu-west-2` log group `/aws/lambda/RustTemplate-SQS`.

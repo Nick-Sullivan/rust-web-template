@@ -1,17 +1,6 @@
 {
-    "editor.semanticTokenColorCustomizations": {
-      "rules": {
-        "*.mutable": {
-          "fontStyle": "",
-        },
-      }
-    },
-    "[python]": {
+    "[terraform]": {
       "editor.formatOnSave": true,
-      "editor.codeActionsOnSave": {
-        "source.fixAll": "explicit",
-        "source.organizeImports": "explicit"
-      },
-      "editor.defaultFormatter": "charliermarsh.ruff"
+      "editor.defaultFormatter": "hashicorp.terraform"
     }
-  }
+}

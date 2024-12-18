@@ -2,14 +2,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Server",
+            "name": "API Server",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/server/target/debug/server",
+            "program": "${workspaceFolder}/server/target/debug/api_handler",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopOnEntry": false,
-            "sourceLanguages": ["rust"]
+            "sourceLanguages": ["rust"],
         },
     ]
 }

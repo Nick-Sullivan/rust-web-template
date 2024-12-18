@@ -10,16 +10,20 @@ RUN apt-get update \
 # Build the project
 COPY . .
 RUN cargo build \
-        --features is_lambda \
+        --no-default-features \
+        --features api_gateway_trigger \
         --release \
-        --bin server \
+        --bin api_handler \
+        --bin sqs_handler \
         --target x86_64-unknown-linux-musl \
-    && strip target/x86_64-unknown-linux-musl/release/server
+    && strip target/x86_64-unknown-linux-musl/release/api_handler \
+    && strip target/x86_64-unknown-linux-musl/release/sqs_handler
     
 # Create an AWS Lambda compatible image
 FROM public.ecr.aws/lambda/provided:al2
-COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/server /server
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/api_handler /api_handler
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/sqs_handler /sqs_handler
 
 ENV AWS_LAMBDA_HTTP_IGNORE_STAGE_IN_PATH=true
 
-ENTRYPOINT ["/server"]
+ENTRYPOINT ["/api_handler"]
