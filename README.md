@@ -34,7 +34,7 @@ curl -X GET http://localhost:3000/hello
 
 Via VSCode
 
-You can either use `rust-analyzer: Debug` in VSCode selection, or use `Run` which uses the `launch.json` config in the `.vscode` directory. Note that this does not build, so make sure to build first.
+You can either use `rust-analyzer: Debug` in VSCode selection, or use `Run` which uses the `launch.json` config in the `.vscode` directory.
 
 ## Creating cloud infrastructure
 

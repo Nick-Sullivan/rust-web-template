@@ -10,6 +10,7 @@
             "cwd": "${workspaceFolder}",
             "stopOnEntry": false,
             "sourceLanguages": ["rust"],
+            "preLaunchTask": "cargo build",
         },
     ]
 }
