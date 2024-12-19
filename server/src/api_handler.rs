@@ -1,7 +1,9 @@
 use axum::body::Body;
+use axum::extract::ws::{Message, WebSocket, WebSocketUpgrade};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
-use axum::{routing::get, Router};
+use axum::{routing::any, routing::get, Router};
+use futures_util::stream::StreamExt;
 use hyper::Request;
 use std::error::Error;
 use tower_http::trace::TraceLayer;
@@ -26,6 +28,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 
     let app = Router::new()
         .route("/hello", get(handle_hello))
+        .route("/ws", any(handle_websocket))
         .layer(trace_layer);
 
     // One-shot when invoked from API Gateway
@@ -50,6 +53,21 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 async fn handle_hello() -> impl IntoResponse {
     let data = "Hello!";
     (StatusCode::OK, data).into_response()
+}
+
+async fn handle_websocket(ws: WebSocketUpgrade) -> impl IntoResponse {
+    ws.on_upgrade(handle_socket)
+}
+
+async fn handle_socket(mut socket: WebSocket) {
+    while let Some(Ok(msg)) = socket.next().await {
+        if let Message::Text(text) = msg {
+            let response = Message::Text(text);
+            if socket.send(response).await.is_err() {
+                break;
+            }
+        }
+    }
 }
 
 #[cfg(test)]

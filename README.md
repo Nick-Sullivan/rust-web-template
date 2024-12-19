@@ -29,12 +29,20 @@ Via command line.
 ```bash
 cd server
 cargo run
-curl -X GET http://localhost:3000/hello
 ```
 
 Via VSCode
 
 You can either use `rust-analyzer: Debug` in VSCode selection, or use `Run` which uses the `launch.json` config in the `.vscode` directory.
+
+Once the server is running, test the endpoints using
+
+```bash
+# HTTP request/response
+curl -X GET http://localhost:3000/hello
+# Websocket chat
+wscat -c ws://localhost:3000/ws
+```
 
 ## Creating cloud infrastructure
 
