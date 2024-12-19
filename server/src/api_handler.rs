@@ -51,3 +51,19 @@ async fn handle_hello() -> impl IntoResponse {
     let data = "Hello!";
     (StatusCode::OK, data).into_response()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use axum::body::to_bytes;
+
+    #[tokio::test]
+    async fn test_handle_hello_responds() {
+        let response = handle_hello().await.into_response();
+        assert_eq!(response.status(), StatusCode::OK);
+        let body = response.into_body();
+        let body_bytes = to_bytes(body, usize::MAX).await.unwrap();
+        let body_str = std::str::from_utf8(&body_bytes).unwrap();
+        assert_eq!(body_str, "Hello!");
+    }
+}
